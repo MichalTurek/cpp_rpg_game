@@ -1,10 +1,2 @@
-﻿  pch.cpp
-  Game_status.cpp
-  great_game.cpp
-C:\Users\micha\OneDrive\Pulpit\projekty\game_project_cpp\great_game\great_game.cpp(4,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  Hero.cpp
-  Organism.cpp
-  Sheep.cpp
-  World.cpp
-  Generating Code...
-  great_game.vcxproj -> C:\Users\micha\OneDrive\Pulpit\projekty\game_project_cpp\x64\Debug\great_game.exe
+﻿  Hero.cpp
+  great_game.vcxproj -> C:\Users\janek\Desktop\Projekty\rpg_mt_projekcik\x64\Debug\great_game.exe
