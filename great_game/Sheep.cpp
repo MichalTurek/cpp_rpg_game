@@ -12,4 +12,5 @@ Sheep::Sheep( coordinates organism_pos, World* act_world)
 void Sheep::draw_organism()
 {
 	cout << "s";
+
 }

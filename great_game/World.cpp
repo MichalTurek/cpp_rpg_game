@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "World.h"
 #include "Sheep.h"
+#include "Hero.h"
+
 World::World(int act_level) :
 	organisms_vector(generate_organisms(act_level))
 {
@@ -40,6 +42,8 @@ vector<unique_ptr<Organism>>  World::generate_organisms(int act_level)
 			}
 		}
 	}
+	coordinates new_organism_pos(0, 0);
+	organism_list.push_back(make_unique<Hero>(new_organism_pos, this));
 	
 
 	

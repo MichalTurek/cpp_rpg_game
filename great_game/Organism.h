@@ -10,7 +10,7 @@ protected:
 
 	World* world;
 public:
-	void action();
+	virtual void action();
 	//finds new position for organism
 	coordinates find_new_position();
 	void collision();//todo later
