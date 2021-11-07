@@ -16,7 +16,8 @@ Hero::Hero(coordinates organism_pos, World* act_world)
 	this->inteligence = 5;
 	this->armor = 4;
 	this->damage = 2;
-	this->health = 5 + (strength*5);
+	this->max_health = 5 + (strength*5);
+	this->health = max_health;
 	this->attack_speed = 4;
 }
 
