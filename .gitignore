@@ -42,5 +42,5 @@ ipch
 *sdf
 /.vs
 # visual studio files in project files 
-great_game/Debug
-great_game/x64
+great_game/Debug/
+great_game/x64/
