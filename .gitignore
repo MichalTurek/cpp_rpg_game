@@ -41,6 +41,7 @@ Release
 ipch
 *sdf
 /.vs
+/x64
 # visual studio files in project files 
 great_game/Debug/
 great_game/x64/
