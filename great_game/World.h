@@ -20,5 +20,6 @@ public:
 	}
 	void make_turn();
 	void draw_world() const;
+	
 };
 

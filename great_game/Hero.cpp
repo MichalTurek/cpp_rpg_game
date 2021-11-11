@@ -18,7 +18,8 @@ Hero::Hero(coordinates organism_pos, World* act_world)
 	this->damage = 2;
 	this->max_health = 5 + (strength*5);
 	this->health = max_health;
-	this->attack_speed = 4;
+	this->attack_speed = 6;
+	this->level = 0;
 }
 
 void Hero::draw_organism()
@@ -29,40 +30,17 @@ void Hero::draw_organism()
 void Hero::action()
 {
 	coordinates new_pos = organism_coordinates;
-	int z;
-	switch((z = _getch()))
+	Direction player_choice=Direction::undef;
+	int x;
+	_getch();
+	while(player_choice == Direction::undef)
 	{
-	case KEY_UP:
-		if (new_pos.y > 0)
-		{
-			new_pos.y--;
-		}
-		break;
-
-	case KEY_DOWN:
-		if (new_pos.y < world->get_y_size() - 1)
-		{
-			new_pos.y++;
-		}
-		break;
-
-	case KEY_LEFT:
-		if (new_pos.x > 0)
-		{
-			new_pos.x--;
-		}
-		break;
-
-	case KEY_RIGHT:
-		if (new_pos.x < world->get_x_size() - 1)
-		{
-			new_pos.x++;
-		}
-		break;
-
-	default:
-		break;
+		player_choice = static_cast<Direction>(_getch());
+		if (new_pos.y > 0 &&static_cast<int>(player_choice) == KEY_UP)  new_pos.y--;
+		else if (new_pos.y < world->get_y_size() - 1 && static_cast<int>(player_choice) == KEY_DOWN)  new_pos.y++;
+		else if (new_pos.x > 0 && static_cast<int>(player_choice) == KEY_LEFT)  new_pos.x--;
+		else if (new_pos.x < world->get_x_size() - 1 && static_cast<int>(player_choice) == KEY_RIGHT)  new_pos.x++;
 	}
-
 	this->set_coordinates(new_pos);
+	world->draw_world();
 }

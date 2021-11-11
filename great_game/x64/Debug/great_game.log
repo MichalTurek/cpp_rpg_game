@@ -1,2 +1,3 @@
 ﻿  Hero.cpp
+C:\Users\micha\OneDrive\Pulpit\projekty\game_project_cpp\great_game\Hero.cpp(34,6): warning C4101: 'x': unreferenced local variable
   great_game.vcxproj -> C:\Users\micha\OneDrive\Pulpit\projekty\game_project_cpp\x64\Debug\great_game.exe

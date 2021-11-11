@@ -22,10 +22,10 @@ void Organism::action()
 	{
 		this->set_coordinates(new_pos);
 	}
-	else
+	//tofixlater: if for organism name
+	else if((*attacked_organism)->get_attack_speed() != this->get_attack_speed())
 	{
-		/*cout << "napierdlaja sie x:" ;
-		cout << new_pos.x << " , y: " << new_pos.y << endl;*/
+		this->collision(attacked_organism);
 	}
 
 	return;
@@ -53,44 +53,53 @@ coordinates Organism::find_new_position()
 	}
 	return new_pos;
 }
-double Organism::calc_dmg_modifier(unique_ptr<Organism> organism_in_fight_ptr) const
+double Organism::calc_dmg_modifier(vector<unique_ptr<Organism>>::iterator  organism_in_fight_ptr) const
 {
-	double dmg_modifier = static_cast<double>(this->damage) - organism_in_fight_ptr->get_armor();
+	double dmg_modifier = static_cast<double>(this->damage) - (*organism_in_fight_ptr)->get_armor();
 	dmg_modifier /= this->damage;
 	return dmg_modifier > 0.2 ? dmg_modifier : 0.2;
 }
-double Organism::calc_dodge_chance(unique_ptr<Organism> organism_in_fight_ptr) const
+double Organism::calc_dodge_chance(vector<unique_ptr<Organism>>::iterator  organism_in_fight_ptr, int enemy_level) const
 {
-	return static_cast<double>(this->dodge) / organism_in_fight_ptr->get_level();
-
+	return static_cast<double>(this->dodge) / enemy_level;
 }
-void Organism::deal_damage_to(unique_ptr<Organism> attacked_organism, int damage_modifier, int attacked_organism_dodge_chance)
+void Organism::deal_damage_to(vector<unique_ptr<Organism>>::iterator  attacked_organism, int attacked_organism_absorption, int attacked_organism_dodge_chance)
 {
 	if (rand() % 10 / 100.0 < attacked_organism_dodge_chance) return;
-	else  attacked_organism->set_health(attacked_organism->get_health() - damage_modifier * damage);
+	else  (*attacked_organism)->set_health((*attacked_organism)->get_health() -(1 -attacked_organism_absorption) * damage);
 	return;
 }
-void Organism::collision()
+void Organism::collision(std::vector<unique_ptr<Organism>>::iterator attacker_iterator)
 {
-	//finding another organism
 	auto& organism_vector = world->get_vector();
-	auto attacked_organism_iterator = find_if(begin(organism_vector), end(organism_vector), [this](const unique_ptr<Organism>& candidate_organism)
+	auto defender_iterator = find_if(begin(organism_vector), end(organism_vector), [this](const unique_ptr<Organism>& candidate_organism)
 		{
-			return this->get_coordinates() == candidate_organism->get_coordinates() && this != candidate_organism.get();
+			return this->get_coordinates() == candidate_organism->get_coordinates() && this == candidate_organism.get();
 		});
+	int attack_full_charge_val;
+	double attacker_atk_speed = (*attacker_iterator)->get_attack_speed(); 
+	double defender_atk_speed = (*defender_iterator)->get_attack_speed();
+	(attacker_atk_speed < defender_atk_speed) ? attack_full_charge_val = defender_atk_speed : attack_full_charge_val = attacker_atk_speed;
 
-	//HERE I WANT TO CHECK IF THEY ARE OBJECTS OF THE SAME class
-	int attack_charge;
-	double organism_atk_speed = this->get_attack_speed();
-	double attacked_organism_atk_speed = (*attacked_organism_iterator)->get_attack_speed();
-	double organism_attack_charge = 0;
-	double attacked_organism_charge = 0;
-
-	(organism_atk_speed < attacked_organism_atk_speed) ? attack_charge = attacked_organism_atk_speed : attack_charge = organism_atk_speed;
+	double attacker_attack_charge = 0, defender_charge = 0;
+	organism_combat_modifiers attacker((*defender_iterator)->calc_dmg_modifier(attacker_iterator),
+		(*defender_iterator)->calc_dodge_chance(attacker_iterator, (*attacker_iterator)->get_level()));
+	organism_combat_modifiers defender((*attacker_iterator)->calc_dmg_modifier(attacker_iterator),
+		(*attacker_iterator)->calc_dodge_chance(attacker_iterator, (*attacker_iterator)->get_level()));
+	
 	while (true)
 	{
-		attacked_organism_charge += attacked_organism_atk_speed;
-		organism_attack_charge += organism_atk_speed;
+		defender_charge += defender_atk_speed;
+		attacker_attack_charge += attacker_atk_speed;
+		if (defender_charge - attack_full_charge_val >= 0)
+		{
+			defender_charge -= attack_full_charge_val;
+			(*defender_iterator)->deal_damage_to(defender_iterator,defender.dmg_absorption,defender.dodge_chance);
+		}
+		if (attacker_attack_charge - attack_full_charge_val >= 0)
+		{
+			attacker_attack_charge -= attack_full_charge_val;
+			this->deal_damage_to(attacker_iterator, attacker.dmg_absorption, attacker.dodge_chance);
+		}
 	}
-
 }

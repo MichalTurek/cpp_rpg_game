@@ -13,7 +13,7 @@ public:
 	int get_dexterity() const { return dexterity; }
 	int get_inteligence() const { return strength; }
 
-	void action();
+	void action() override;
 
 	void draw_organism() override;
 	

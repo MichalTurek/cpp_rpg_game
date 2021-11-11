@@ -8,6 +8,7 @@ Sheep::Sheep( coordinates organism_pos, World* act_world)
 	this->damage = 2;
 	this->health = 10;
 	this->attack_speed = 4;
+	this->level = 1;
 }
 void Sheep::draw_organism()
 {
