@@ -13,6 +13,7 @@ using std::rand;
 #include <algorithm>
 using std::stable_sort;
 using std::sort;
+using std::remove_if;
 using std::find_if;
 using std::find;
 using std::begin;
@@ -28,5 +29,8 @@ using std::move;
 #include <vector>
 using std::vector;
 #include "constants.h"
-#include "World.h"
 #include "Organism.h"
+
+#include "World.h"
+using organism_iterator = std::vector<unique_ptr<Organism>>::iterator;
+

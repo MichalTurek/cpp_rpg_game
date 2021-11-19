@@ -1,3 +1,5 @@
-﻿  Hero.cpp
-C:\Users\micha\OneDrive\Pulpit\projekty\game_project_cpp\great_game\Hero.cpp(34,6): warning C4101: 'x': unreferenced local variable
+﻿  Organism.cpp
+C:\Users\micha\OneDrive\Pulpit\projekty\game_project_cpp\great_game\Organism.cpp(70,70): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\micha\OneDrive\Pulpit\projekty\game_project_cpp\great_game\Organism.cpp(83,71): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\micha\OneDrive\Pulpit\projekty\game_project_cpp\great_game\Organism.cpp(83,117): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
   great_game.vcxproj -> C:\Users\micha\OneDrive\Pulpit\projekty\game_project_cpp\x64\Debug\great_game.exe

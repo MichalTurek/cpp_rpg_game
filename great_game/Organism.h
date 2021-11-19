@@ -1,24 +1,30 @@
 #pragma once
 #include "pch.h"
 #include "World.h"
+using organism_iterator = std::vector<unique_ptr<Organism>>::iterator;
+struct organism_combat_modifiers;
 class Organism
 {
 protected:
-	coordinates organism_coordinates;
-	int max_health, health, damage, armor, attack_speed, dodge, level;
-	int  damage_absorption;
 
+	int max_health, health, damage, armor, dodge, level;
+	double attack_speed;
+	int  damage_absorption;
+	coordinates organism_coordinates;
 	World* world;
 public:
+
+	Organism(coordinates organism_coordinates, World* world);
+
 	virtual void action();
 	//finds new position for organism
 	coordinates find_new_position();
-	void collision(std::vector<unique_ptr<Organism>>::iterator attacker_iterator);
-	double calc_dmg_modifier(vector<unique_ptr<Organism>>::iterator  organism_in_fight_ptr) const;
-	double calc_dodge_chance(vector<unique_ptr<Organism>>::iterator  organism_in_fight_ptr, int enemy_level) const;
-	void deal_damage_to(vector<unique_ptr<Organism>>::iterator  attacked_organism, int attacked_organism_absorption, int attacked_organism_dodge_chance);
-
-	Organism(coordinates organism_coordinates, World* world);
+	//fight functions 
+	void collision(organism_iterator attacker_iterator);
+	double calc_dmg_modifier(organism_iterator  organism_in_fight_ptr) const;
+	double calc_hit_chance(organism_iterator  organism_in_fight_ptr) const;
+	void deal_damage_to(organism_iterator  attacked_organism, organism_combat_modifiers attacker_modifiers);
+	virtual void after_winning_fight_against(organism_iterator beaten_organism);
 	virtual void draw_organism() = 0;
 	//getters
 	coordinates get_coordinates() const { return organism_coordinates; }
@@ -34,4 +40,4 @@ public:
 	void set_armor(int new_armor) { armor = new_armor; }
 
 };
-
+//move it to new .h file 

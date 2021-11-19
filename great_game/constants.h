@@ -1,5 +1,9 @@
 #pragma once
+
 const int max_level = 10;
+class Organism;
+using organism_iterator = std::vector<unique_ptr<Organism>>::iterator;
+
 enum class Direction
 {
 	left = 0,
@@ -8,7 +12,12 @@ enum class Direction
 	down,
 	undef,
 };
-
+enum class Combat_status
+{
+	no_result_yet=0,
+	attcker_won,
+	defender_won
+};
 
 
 struct coordinates
@@ -25,16 +34,7 @@ struct coordinates
 	}
 };
 
-struct organism_combat_modifiers
-{
-	double  dmg_absorption, dodge_chance;
-	organism_combat_modifiers(double dodge_chance,double dmg_absorption)
-		:
-		dmg_absorption(dmg_absorption),
-		dodge_chance(dodge_chance)
-	{
-	}
-};
+
 const double ORGANISM_SPAWN_CHANCE = 0.1;
 constexpr int KEY_UP = 72;
 constexpr int KEY_DOWN = 80;

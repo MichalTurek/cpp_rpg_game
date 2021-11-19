@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Organism.h"
+#include "organism_combat_modifiers.h"
 Organism::Organism(coordinates organism_coordinates, World* world)
 	:
 	organism_coordinates(organism_coordinates),
@@ -53,23 +54,23 @@ coordinates Organism::find_new_position()
 	}
 	return new_pos;
 }
-double Organism::calc_dmg_modifier(vector<unique_ptr<Organism>>::iterator  organism_in_fight_ptr) const
+double Organism::calc_dmg_modifier(organism_iterator  organism_in_fight_ptr) const
 {
 	double dmg_modifier = static_cast<double>(this->damage) - (*organism_in_fight_ptr)->get_armor();
 	dmg_modifier /= this->damage;
 	return dmg_modifier > 0.2 ? dmg_modifier : 0.2;
 }
-double Organism::calc_dodge_chance(vector<unique_ptr<Organism>>::iterator  organism_in_fight_ptr, int enemy_level) const
+double Organism::calc_hit_chance(organism_iterator  organism_in_fight_ptr) const
 {
-	return static_cast<double>(this->dodge) / enemy_level;
+	return static_cast<double>(this->dodge) / (*organism_in_fight_ptr)->get_level();
 }
-void Organism::deal_damage_to(vector<unique_ptr<Organism>>::iterator  attacked_organism, int attacked_organism_absorption, int attacked_organism_dodge_chance)
+void Organism::deal_damage_to(organism_iterator  attacked_organism, organism_combat_modifiers attacker_modifiers)
 {
-	if (rand() % 10 / 100.0 < attacked_organism_dodge_chance) return;
-	else  (*attacked_organism)->set_health((*attacked_organism)->get_health() -(1 -attacked_organism_absorption) * damage);
+	if (rand() % 10 / 100.0 < attacker_modifiers.dodge_chance ) return;
+	(*attacked_organism)->set_health((*attacked_organism)->get_health() -(1 -attacker_modifiers.dmg_absorption) * damage);
 	return;
 }
-void Organism::collision(std::vector<unique_ptr<Organism>>::iterator attacker_iterator)
+void Organism::collision(organism_iterator attacker_iterator)
 {
 	auto& organism_vector = world->get_vector();
 	auto defender_iterator = find_if(begin(organism_vector), end(organism_vector), [this](const unique_ptr<Organism>& candidate_organism)
@@ -82,24 +83,39 @@ void Organism::collision(std::vector<unique_ptr<Organism>>::iterator attacker_it
 	(attacker_atk_speed < defender_atk_speed) ? attack_full_charge_val = defender_atk_speed : attack_full_charge_val = attacker_atk_speed;
 
 	double attacker_attack_charge = 0, defender_charge = 0;
-	organism_combat_modifiers attacker((*defender_iterator)->calc_dmg_modifier(attacker_iterator),
-		(*defender_iterator)->calc_dodge_chance(attacker_iterator, (*attacker_iterator)->get_level()));
-	organism_combat_modifiers defender((*attacker_iterator)->calc_dmg_modifier(attacker_iterator),
-		(*attacker_iterator)->calc_dodge_chance(attacker_iterator, (*attacker_iterator)->get_level()));
-	
-	while (true)
+	organism_combat_modifiers attacker_modifiers(attacker_iterator, defender_iterator);
+	organism_combat_modifiers defender_modifiers(defender_iterator, attacker_iterator);
+	Combat_status fight_result = Combat_status::no_result_yet;
+	while (fight_result == Combat_status::no_result_yet)
 	{
 		defender_charge += defender_atk_speed;
 		attacker_attack_charge += attacker_atk_speed;
 		if (defender_charge - attack_full_charge_val >= 0)
 		{
 			defender_charge -= attack_full_charge_val;
-			(*defender_iterator)->deal_damage_to(defender_iterator,defender.dmg_absorption,defender.dodge_chance);
+			(*defender_iterator)->deal_damage_to(defender_iterator,attacker_modifiers);
 		}
 		if (attacker_attack_charge - attack_full_charge_val >= 0)
 		{
 			attacker_attack_charge -= attack_full_charge_val;
-			this->deal_damage_to(attacker_iterator, attacker.dmg_absorption, attacker.dodge_chance);
+			this->deal_damage_to(attacker_iterator, defender_modifiers);
+		}
+		if ((*attacker_iterator)->get_health() < 0)
+		{
+			fight_result = Combat_status::defender_won;
+			(*defender_iterator)->after_winning_fight_against(defender_iterator);
+		}
+		if ((*defender_iterator)->get_health() < 0)
+		{
+			fight_result = Combat_status::attcker_won;
+			(*attacker_iterator)->after_winning_fight_against(defender_iterator);
+
 		}
 	}
+
+}
+void Organism::after_winning_fight_against(organism_iterator beaten_organism)
+{
+	this->set_health(this->max_health);
+	
 }

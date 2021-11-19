@@ -11,14 +11,13 @@ World::World(int act_level) :
 void World::make_turn()
 {
 	cout << "new turn" << endl;
-	auto& organism_vector = this->get_vector();
 	//sorting organisms by their vigor and also by age ( older organisms make move first)
-	stable_sort(begin(organism_vector), end(organism_vector),
+	stable_sort(begin(organisms_vector), end(organisms_vector),
 		[](const unique_ptr<Organism>& organism_1,const unique_ptr<Organism>& organism_2)
 		{
 			return organism_1->get_attack_speed() > organism_2->get_attack_speed(); 
 		});
-	for (auto& actual_organism : organism_vector)
+	for (auto& actual_organism : organisms_vector)
 	{
 		actual_organism->action();
 		draw_world();
@@ -44,10 +43,11 @@ vector<unique_ptr<Organism>>  World::generate_organisms(int act_level)
 	}
 	coordinates new_organism_pos(0, 0);
 	organism_list.push_back(make_unique<Hero>(new_organism_pos, this));
-	
-
-	
 	return organism_list;
+}
+void World::remove_organism(organism_iterator organism_to_delete)
+{
+	organisms_vector.erase(organism_to_delete);
 }
 void World::draw_world() const
 {

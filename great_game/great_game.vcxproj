@@ -175,6 +175,7 @@
   <ItemGroup>
     <ClInclude Include="Game_status.h" />
     <ClInclude Include="constants.h" />
+    <ClInclude Include="organism_combat_modifiers.h" />
     <ClInclude Include="Hero.h" />
     <ClInclude Include="Organism.h" />
     <ClInclude Include="pch.h" />

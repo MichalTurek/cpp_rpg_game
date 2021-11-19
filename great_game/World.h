@@ -1,7 +1,6 @@
 #pragma once
 #include "pch.h"
 
-class Organism;
 class World
 {
 private:
@@ -18,6 +17,8 @@ public:
 		vector<unique_ptr<Organism>>::const_iterator iter = std::cbegin(organisms_vector);
 		return iter;
 	}
+	void remove_organism(organism_iterator organism_to_delete);
+
 	void make_turn();
 	void draw_world() const;
 	

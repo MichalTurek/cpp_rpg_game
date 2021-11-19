@@ -19,7 +19,8 @@ Hero::Hero(coordinates organism_pos, World* act_world)
 	this->max_health = 5 + (strength*5);
 	this->health = max_health;
 	this->attack_speed = 6;
-	this->level = 0;
+	this->level = 1;
+	this->dodge = 2;
 }
 
 void Hero::draw_organism()
@@ -31,7 +32,6 @@ void Hero::action()
 {
 	coordinates new_pos = organism_coordinates;
 	Direction player_choice=Direction::undef;
-	int x;
 	_getch();
 	while(player_choice == Direction::undef)
 	{
